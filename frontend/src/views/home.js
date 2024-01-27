@@ -2,6 +2,8 @@ import React from 'react'
 
 import { Helmet } from 'react-helmet'
 
+import { Link } from 'react-router-dom'
+
 import FeatureCard from '../components/feature-card'
 import './home.css'
 
@@ -26,8 +28,10 @@ const Home = (props) => {
             <span className="home-text04">Blog</span>
           </nav>
           <div className="home-buttons">
-            <button className="home-login button">Login</button>
-            <button className="button">Register</button>
+          <button className="home-login button">
+          <Link to="/login">Login</Link>
+        </button>
+            <button className="button"><Link to="/signup">Signup</Link></button>
           </div>
         </div>
         <div data-thq="thq-burger-menu" className="home-burger-menu">

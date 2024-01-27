@@ -22,22 +22,22 @@ const Signup = () => {
 };
 
   return (
-    <div>
+    <div className='container'>
       <h2>Signup</h2>
       <form onSubmit={handleSignup}>
-        <label>
+        <label className='label'>
           Username:
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="input" />
         </label>
-        <label>
+        <label className='label'>
           Email:
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" />
         </label>
-        <label>
+        <label className='label'>
           Password:
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input" />
         </label>
-        <button type="submit">Signup</button>
+        <button type="submit" className='button'>Signup</button>
       </form>
       <p>
         Already have an account? <Link to="/login">Login</Link>

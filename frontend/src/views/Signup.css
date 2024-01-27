@@ -1,29 +1,43 @@
-/* src/components/Signup.css */
-form {
-    max-width: 300px;
-    margin: auto;
-  }
-  
-  label {
+/* SIgnup.css */
+body {
+  background-image: url('../../public/unsplash-image-1500h.jpeg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.container {
+  max-width: 300px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  position: absolute; 
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+  .label {
     display: block;
-    margin-bottom: 10px;
+    margin: 10px 0;
   }
-  
-  input {
+
+  .input {
     width: 100%;
     padding: 8px;
-    margin-bottom: 15px;
+    box-sizing: border-box;
   }
-  
-  button {
-    background-color: #4caf50;
+
+  .button {
+    width: 100%;
+    padding: 10px;
+    background: #4caf50;
     color: white;
-    padding: 10px 15px;
     border: none;
-    cursor: pointer;
+    border-radius: 3px;
   }
-  
+
   button:hover {
     background-color: #45a049;
   }
-  
