@@ -3,14 +3,15 @@ import React, { useState } from 'react';
 import './Login.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setemail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-        const loginData = { username, password };
-        const response = await axios.post('http://localhost:8000/login', loginData);
+        const loginData = { email, password };
+        const response = await axios.post('http://127.0.0.1:8000/users/login', loginData);
         console.log(response.data);  // Handle the response accordingly
 
         console.log('Logged in successfully')
@@ -25,8 +26,8 @@ const Login = () => {
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <label className="label">
-          Username:
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="input" />
+          Email:
+          <input type="text" value={email} onChange={(e) => setemail(e.target.value)} className="input" />
         </label>
         <label className="label">
           Password:

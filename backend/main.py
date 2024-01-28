@@ -1,29 +1,41 @@
 from fastapi import FastAPI, HTTPException
 import torch
+from Models import UserDetail
 import bcrypt
-import secrets
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
-from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo.errors import ServerSelectionTimeoutError
 
 app = FastAPI()
 
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
+)
+
 MONGO_URI="mongodb+srv://kaustubniraula999:g2cnkEI8yt9GkfaF@cluster0.hysfwcm.mongodb.net/"
-client = AsyncIOMotorClient(MONGO_URI)
-db = client["mydatabase"] 
+main_client = AsyncIOMotorClient(MONGO_URI)
+db = main_client["mydatabase"] 
 Usercollection = db["users"]
 
-from pydantic import BaseModel
+# async def connect_to_mongo(CONNECTION_URI):
+#     try:
+#         main_client = AsyncIOMotorClient(CONNECTION_URI)
+#         return main_client
+#     except ServerSelectionTimeoutError:
+#         return "Failed to connect to MongoDB Atlas!"
 
 # tokenizer = transformers.T5Tokenizer.from_pretrained("D:\\tokenizer")
 # model = transformers.T5ForConditionalGeneration.from_pretrained('D:\\model')
-
-class UserDetail(BaseModel):
-    name: str = None
-    email: str
-    username: str = None
-    password : str
 
 async def get_all_emails():
     emails = []
@@ -64,7 +76,7 @@ async def login_user(user: UserDetail):
         print("User not found")
 
 
-@app.get("/users/get/{email}")
+@app.get("/users/getSingleUser/{email}")
 async def get_user(email: str):
     user = await Usercollection.find_one({"email": email},{'_id': 0})
     if user:
@@ -72,7 +84,13 @@ async def get_user(email: str):
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
-@app.post("/")
+@app.post("/createCollection")
+def create_collection(userId:int, collectionName:str):
+    client = AsyncIOMotorClient(MONGO_URI)
+    db = client[collectionName+str(userId)]
+    return db
+
+@app.post("/processQuery")
 def GetUserQuery(str):
 #     input_text = [str]
 #     input_ids = tokenizer(input_text, return_tensors="pt").input_ids

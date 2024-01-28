@@ -8,14 +8,15 @@ const Signup = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleSignup = async () => {
     try {
         const userData = { username, email, password };
-        const response = await axios.post('http://localhost:8000/signup', userData);
-        console.log(response.data);  // Handle the response accordingly
-        
-        console.log('User signed up successfully')
+        const response = await axios.post('http://127.0.0.1:8000/users/register', userData);
+        console.log(response.data);
+        console.log('User signed up successfully');
+        setShowPopup(true);
     } catch (error) {
         console.error('Error during signup:', error);
     }
@@ -38,11 +39,19 @@ const Signup = () => {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input" />
         </label>
         <button type="submit" className='button'>Signup</button>
-      </form>
+      </form>  
       <p>
         Already have an account? <Link to="/login">Login</Link>
       </p>
+
+      {showPopup && (
+                <div className="popup">
+                    <p>User has been successfully registered!</p>
+                    <button onClick={() => setShowPopup(false)}>Close</button>
+                </div>
+            )}
     </div>
+    
   );
 };
 
