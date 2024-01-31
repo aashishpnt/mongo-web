@@ -1,0 +1,64 @@
+.feature-section {
+  background-color: #bdb1b1 ; /* Set your desired background color */
+  padding: 50px 0;
+}
+
+.feature-section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-section-heading {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.feature-section-heading h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.feature-section-main-heading {
+  font-size: 36px;
+  margin: 10px 0;
+}
+
+.feature-section-sub-heading {
+  font-size: 18px;
+  color: #555;
+}
+
+.feature-section-cards {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 20px; 
+}
+
+.features {
+  display: table-cell;
+  text-align: center;
+  vertical-align: top;
+  padding: 20px;
+  background-color: #D9D9D9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.feature-content {
+  margin-top: 20px;
+}
+
+.feature-heading {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.feature-sub-heading {
+  font-size: 16px;
+  color: #777;
+}
+.features:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
