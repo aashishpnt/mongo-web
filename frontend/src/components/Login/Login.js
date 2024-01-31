@@ -1,17 +1,16 @@
 import React from 'react';
 import './Login.css';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 const Login = () => {
   const { register, handleSubmit, errors } = useForm();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('http://localhost:8000/login', data);
-      console.log(response.data); // Handle the response accordingly
       console.log('Logged in successfully');
+      navigate('/dashboard');
     } catch (error) {
       console.error('Error during login:', error);
     }
@@ -46,7 +45,7 @@ const Login = () => {
         </button>
       </form>
       <p>
-        Create a new account? <Link to="/signup">Signup</Link>
+        Create a new account? <Link to="/signup">SignUp</Link>
       </p>
     </div>
   );

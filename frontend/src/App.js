@@ -3,11 +3,12 @@ import './index.css'
 import HeroSection from './components/Home Page/HeroSection';
 import FeatureSection from './components/Home Page/FeatureSection';
 import QuerySection from './components/Home Page/QuerySection';
-import {NotFound} from './components/NotFound/Notfound'
+import NotFound from './components/NotFound/Notfound'
 import Login from './components/Login/Login'
 import SignUp from './components/SignUp/SignUp'
 import Header from './components/common/Header'
 import Footer from './components/common/Footer'
+import Dashboard from './components/Dashboard/Dashboard'
 
 import {
   BrowserRouter as Router,
@@ -27,7 +28,7 @@ function App() {
         <QuerySection />
         </>}
         path="/" />
-
+        <Route element={<Dashboard />} path="/dashboard" />
         <Route element={<Login />} path="/login" />
         <Route element={<SignUp />} path="/signup" />
         <Route element={<NotFound />} path="*" />
