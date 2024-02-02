@@ -1,0 +1,12 @@
+.not-found-container {
+    text-align: center;
+    min-height: 90vh;
+  }
+  
+  h1 {
+    color: #ff6347; 
+  }
+  
+  p {
+    color: #333;
+  }

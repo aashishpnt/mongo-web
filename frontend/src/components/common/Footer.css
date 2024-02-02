@@ -1,0 +1,33 @@
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #bdb1b1;
+    color: #282c34;
+  }
+  
+  img {
+    width: 50px; 
+  }
+  
+  .logo{
+
+  }
+
+  .copyright {
+    flex: 1;
+    text-align: center;
+  }
+  
+
+  .social-icons {
+    display: flex;
+    gap: 10px;
+  }
+  
+
+  .social-icons svg {
+    font-size: 20px; 
+  }
+  

@@ -1,0 +1,64 @@
+.hero {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: var(--dl-space-space-threeunits);
+    min-height: 80vh;
+    align-items: center;
+    justify-content: center;
+    background-color: #D9D9D9;
+    background-image: url("../../../public/markus-spiske-iar-afB0QQw-unsplash.jpg");
+    background-size: cover;
+    background-position: bottom;
+  }
+  
+  .heading {
+    max-width: 800px;
+    text-align: center;
+    color: #bdb1b1;
+  }
+  
+  .sub-heading {
+    font-size: 18px;
+    text-align: center;
+    color: #bdb1b1;
+  }
+  
+  .btn-group {
+    padding: 10px;
+    display: flex;
+    gap: var(--dl-space-space-oneandhalfunits);
+    align-items: center;
+    flex-direction: row;
+  }
+  
+  .filled {
+    background-color: green;  
+    color: white;  
+    padding: 10px 20px;  
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: var(--dl-space-space-oneandhalfunits); 
+  }
+  .filled:hover {
+    background-color: darkgreen; 
+  }
+
+  .flat {
+    background-color: transparent;
+    border: 2px solid green;  
+    color: white;  
+    padding: 10px 20px;  
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .flat:hover {
+    background-color: lightgreen; 
+    color: #bdb1b1 ;
+  }
+
+  .btn-space {
+    width: 10px; 
+  }
