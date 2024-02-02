@@ -1,11 +1,12 @@
 from fastapi import FastAPI, HTTPException
 import torch
+# import transformers
 from Models import UserDetail
 import bcrypt
+import ast 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo.errors import ServerSelectionTimeoutError
 
 app = FastAPI()
 
@@ -69,7 +70,10 @@ async def login_user(user: UserDetail):
         hashed_input_password = bcrypt.hashpw(user.password.encode('utf-8'), stored_random_key_bytes)
 
         if hashed_input_password == stored_hashed_password.encode('utf-8'):
-            return {"message": "User authenticated", "user_id": str(result['_id'])}
+            newUser = await get_user(user.email)
+            newUser.pop('Password', None)
+            newUser.pop('Key', None)
+            return {"message": "User authenticated", "user_id": str(result['_id']), "new_user": newUser}
         else:
             return {"message": "Authentication failed"}
     else:
@@ -89,6 +93,12 @@ def create_collection(userId:int, collectionName:str):
     client = AsyncIOMotorClient(MONGO_URI)
     db = client[collectionName+str(userId)]
     return db
+
+@app.get("/GetAllCollections")
+async def GetAllCollection(user_id:str, db_name: str):
+    db = main_client[db_name]
+    collection_names = await db.list_collection_names()
+    return collection_names
 
 @app.post("/processQuery")
 def GetUserQuery(str):
