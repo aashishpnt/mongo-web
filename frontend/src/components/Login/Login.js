@@ -4,12 +4,17 @@ import { Link , useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 const Login = () => {
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, getValues, errors } = useForm();
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
+      console.log(data);
       console.log('Logged in successfully');
+      const password = getValues("password")
+      const username = getValues("username");
+      console.log('Username:', username);
+      console.log('Password:', password);
       navigate('/dashboard');
     } catch (error) {
       console.error('Error during login:', error);
@@ -25,7 +30,7 @@ const Login = () => {
           <input
             type="text"
             name="username"
-            {...register('Query is required', { required: true })}
+            {...register('username', { required: true })}
             className="input"
           />
           {errors && errors.username && (<span className="error-message">{errors.username.message}</span>)}
@@ -35,7 +40,7 @@ const Login = () => {
           <input
             type="password"
             name="password"
-            {...register('Password is required', { required: true })}
+            {...register('password', { required: true })}
             className="input"
           />
           {errors && errors.password && (<span className="error-message">{errors.password.message}</span>)}
