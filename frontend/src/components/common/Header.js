@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; 
+import { NavLink } from 'react-router-dom'; 
 import { useLocation } from 'react-router-dom';
 import './Header.css';
 import { FaDatabase } from "react-icons/fa6";
@@ -13,25 +13,25 @@ const Header = () => {
     <header>
       
       <div className="logo">
-        <Link to="/">
+        <NavLink to="/">
         <FaDatabase size={30}/>
-        </Link>
+        </NavLink>
       </div>
 
       
       <nav className="nav-menu">
         <ul>
-          <li><Link to="/about">About</Link></li>
-          <li><Link to="/features">Features</Link></li>
-          <li><Link to="/team">Team</Link></li>
-          <li><Link to="/blog">Blog</Link></li>
+          <li><NavLink to="/about">About</NavLink></li>
+          <li><NavLink to="/#features" smooth>Features</NavLink></li>
+          <li><NavLink to="/team">Team</NavLink></li>
+          <li><NavLink to="/blog">Blog</NavLink></li>
         </ul>
       </nav>
 
       
       <div className="user-options">
-        <Link to="/login">Login</Link>
-        <Link to="/signup">Signup</Link>
+        <NavLink to="/login">Login</NavLink>
+        <NavLink to="/signup">Signup</NavLink>
       </div>
     </header>
   );

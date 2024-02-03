@@ -47,7 +47,7 @@ const FeatureSection = () => {
   ];
 
   return (
-    <div className="feature-section">
+    <div className="feature-section" id='features'>
       <div className="feature-section-container">
         <div className="feature-section-heading">
           <span className="overline"><h1>Features</h1></span>

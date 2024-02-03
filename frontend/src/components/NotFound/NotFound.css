@@ -3,10 +3,10 @@
     min-height: 90vh;
   }
   
-  h1 {
+  .not-found-container h1 {
     color: #ff6347; 
   }
   
-  p {
+  .not-found-container p {
     color: #333;
   }

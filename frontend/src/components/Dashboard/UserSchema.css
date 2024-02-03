@@ -1,0 +1,33 @@
+/* QueryOutput.css */
+.query-output {
+    width: 250px;
+    height: 100%;
+    background-color:#555;
+    color:azure;
+    padding: 20px;
+    min-height: 90vh;
+  }
+  
+  h2 {
+    color: azure;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  li:hover {
+    background-color: #555;
+  }
+  
+  .sublist {
+    margin-left: 20px;
+  }
+  

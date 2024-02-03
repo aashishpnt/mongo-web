@@ -5,6 +5,7 @@ footer {
     padding: 10px;
     background-color: #bdb1b1;
     color: #282c34;
+    position: relative;
   }
   
   img {
