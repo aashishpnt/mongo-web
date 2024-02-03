@@ -55,6 +55,7 @@ async def register_user(user: UserDetail):
         
         result = await Usercollection.insert_one({"name" : user.name,"username": user.username, "email": user.email, 
                                                   "Password" : hashed_password_str , "Key" : salt_str})
+        print("Registered")
         return {"message": "User created successfully", "user_id": str(result.inserted_id)}
     else:
         return {"message": "Email already taken"}
