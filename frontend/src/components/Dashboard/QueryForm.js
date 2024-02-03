@@ -13,7 +13,7 @@ const QueryForm = () => {
   };
 
   return (
-    <div className="query-section">
+    <div className="query-form">
       <div className="query-section-container section-container">
         <h1 className="query-section-heading heading2">
           Explore Your MongoDB Database

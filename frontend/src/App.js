@@ -8,7 +8,7 @@ import Login from './components/Login/Login'
 import SignUp from './components/SignUp/SignUp'
 import Header from './components/common/Header'
 import Footer from './components/common/Footer'
-import Dashboard from './components/Dashboard/dashboard'
+import Dashboard from './components/Dashboard/Dashboard'
 
 import {
   BrowserRouter as Router,
