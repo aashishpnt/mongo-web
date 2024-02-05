@@ -2,6 +2,7 @@ import React from 'react';
 import './Login.css';
 import { Link , useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
 const Login = () => {
   const { register, handleSubmit, getValues, errors } = useForm();
@@ -11,11 +12,27 @@ const Login = () => {
     try {
       console.log(data);
       console.log('Logged in successfully');
-      const password = getValues("password")
-      const username = getValues("username");
-      console.log('Username:', username);
-      console.log('Password:', password);
-      navigate('/dashboard');
+
+      const requestBody = {
+        username : getValues('username'),
+        password : getValues('password')
+      };
+
+      var response = await axios.post('http://127.0.0.1:8000/users/login', requestBody,{
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        navigate('/dashboard');
+        console.log('User logged in successfully');
+      }
+      else {
+        console.error('Error during log in:', response.statusText);
+      }
+      
+      
     } catch (error) {
       console.error('Error during login:', error);
     }

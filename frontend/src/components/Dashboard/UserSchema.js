@@ -65,6 +65,7 @@ const QueryOutput = () => {
             <span onClick={() => handleDatabaseClick(database)} style={{ cursor: 'pointer' }}>
               {selectedDatabase === database ? '-' : '+'} {database}
             </span>
+          
             {selectedDatabase === database && (
               <ul className="sublist">
                 {collections.map((collection) => (
