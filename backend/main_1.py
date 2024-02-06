@@ -4,6 +4,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ServerSelectionTimeoutError
+from pydantic import BaseModel
+from fastapi.encoders import jsonable_encoder
+import jwt
+
+
+SECRET_KEY = "nepal123"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 800
+
+dummy_user = {
+    "username": "aashish",
+    "password": "123456",
+}
 
 app = FastAPI()
 
@@ -16,8 +29,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 MONOGODB_URI = "mongodb://localhost:27017"
@@ -25,6 +38,10 @@ MONOGODB_URI = "mongodb://localhost:27017"
 client = AsyncIOMotorClient(MONOGODB_URI)
 db = client.admin
 
+class Loginclass(BaseModel):
+   username: str
+   password: str
+    
 @app.get("/databases")
 async def get_databases():
     try:
@@ -46,3 +63,12 @@ async def get_collections(database_name: str):
         return {"collections": collections}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+@app.post("/login")
+async def login_user(login_item: Loginclass):
+    data = jsonable_encoder(login_item)
+    if dummy_user["username"] == data["username"] and dummy_user["password"] == data["password"]:
+        encoded_jwt = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+        return {'token':encoded_jwt}
+    else:
+        return {'message':'login failed'}

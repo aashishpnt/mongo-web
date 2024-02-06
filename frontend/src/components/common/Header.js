@@ -1,11 +1,19 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom'; 
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
 import { FaDatabase } from "react-icons/fa6";
+import { fetchToken } from '../Auth';
 
 const Header = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const auth = fetchToken();
+
+    const signout = () => {
+      localStorage.removeItem('loginToken')
+      navigate("/")
+    };
     if (location.pathname === "/login" || location.pathname === "/signup") {
         return null;
     }
@@ -21,8 +29,10 @@ const Header = () => {
       
       <nav className="nav-menu">
         <ul>
-          <li><NavLink to="/dashboard">Dashboard</NavLink></li>
-          <li><NavLink to="/#features" smooth>Features</NavLink></li>
+          {auth && (
+              <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+            )}
+          <li><NavLink to="/#features">Features</NavLink></li>
           <li><NavLink to="/team">Team</NavLink></li>
           <li><NavLink to="/blog">Blog</NavLink></li>
         </ul>
@@ -30,8 +40,17 @@ const Header = () => {
 
       
       <div className="user-options">
-        <NavLink to="/login">Login</NavLink>
-        <NavLink to="/signup">Signup</NavLink>
+      {auth ? (
+          <>
+            <span>Welcome, User!</span>
+            <button onClick={signout} className='button-filled'>Logout</button>
+          </>
+        ) : (
+          <>
+            <NavLink to="/login">Login</NavLink>
+            <NavLink to="/signup">Signup</NavLink>
+          </>
+        )}
       </div>
     </header>
   );

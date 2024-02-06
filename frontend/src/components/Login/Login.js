@@ -2,20 +2,54 @@ import React from 'react';
 import './Login.css';
 import { Link , useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { setToken, fetchToken } from "../Auth";
 
 const Login = () => {
   const { register, handleSubmit, getValues, errors } = useForm();
   const navigate = useNavigate();
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [errorMessage, setErrorMessage] = useState("");
+  // const [, setToken] = useContext(UserContext);
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
-      console.log('Logged in successfully');
-      const password = getValues("password")
       const username = getValues("username");
+      const password = getValues("password");
+      // console.log(data);
+      // console.log('Logged in successfully');
       console.log('Username:', username);
       console.log('Password:', password);
-      navigate('/dashboard');
+      if(username.length === 0){
+        alert("Username has left Blank!");
+      }
+      else if(password.length === 0){
+        alert("password has left blank!");
+      }
+      else{
+        console.log('Logged in suceessfully')
+        axios.post('http://localhost:8000/login', {
+          username: username,
+          password: password
+        })
+        .then(function (response) {
+          console.log(response);
+          alert(response.data["message"])
+          if (response.data['message']==="Login failed"){
+            alert("Invalid Credentials, please try again");
+          }else{
+            if(response.data.token){
+              setToken(response.data.token)
+              navigate('/dashboard');
+            }
+          }
+        })
+        .catch(function (error) {
+          console.log(error, "error");
+        });
+      }
+
     } catch (error) {
       console.error('Error during login:', error);
     }
@@ -23,7 +57,15 @@ const Login = () => {
 
   return (
     <div className="container">
-      <h2>Login</h2>
+      {
+       fetchToken()
+       ? (
+        <h2>You are logged in</h2>
+       )
+       : (
+        <h2>Login</h2>
+       ) 
+      }
       <form onSubmit={handleSubmit(onSubmit)}>
         <label className="label">
           Username:

@@ -9,6 +9,7 @@ import SignUp from './components/SignUp/SignUp'
 import Header from './components/common/Header'
 import Footer from './components/common/Footer'
 import Dashboard from './components/Dashboard/Dashboard'
+import { RequireToken } from './components/Auth.js'
 
 import {
   BrowserRouter as Router,
@@ -28,7 +29,11 @@ function App() {
         <QuerySection />
         </>}
         path="/" />
-        <Route element={<Dashboard />} path="/dashboard" />
+        <Route element={
+          <RequireToken>
+            <Dashboard />
+          </RequireToken>
+          } path="/dashboard" />
         <Route element={<Login />} path="/login" />
         <Route element={<SignUp />} path="/signup" />
         <Route element={<NotFound />} path="*" />
