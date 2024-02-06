@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException,Response, status
 import torch
 # import transformers
 from Models import UserDetail
@@ -23,7 +23,8 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
-MONGO_URI="mongodb+srv://kaustubniraula999:g2cnkEI8yt9GkfaF@cluster0.hysfwcm.mongodb.net/"
+MONGO_URI = "mongodb+srv://kaustubniraula999:g2cnkEI8yt9GkfaF@cluster0.hysfwcm.mongodb.net/"
+MONOGODB_URI_LOCALHOST = "mongodb://localhost:27017"
 main_client = AsyncIOMotorClient(MONGO_URI)
 db = main_client["mydatabase"] 
 Usercollection = db["users"]
@@ -45,7 +46,7 @@ async def get_all_emails():
     return emails
 
 @app.post("/users/register")
-async def register_user(user: UserDetail):
+async def register_user(user: UserDetail, response: Response):
     emails = await get_all_emails()
     if user.email not in emails:
         salt = bcrypt.gensalt()
@@ -53,17 +54,19 @@ async def register_user(user: UserDetail):
         hashed_password_str = hashed_password.decode('utf-8')
         salt_str = salt.hex()
         
-        result = await Usercollection.insert_one({"name" : user.name,"username": user.username, "email": user.email, 
+        result = Usercollection.insert_one({"name" : user.name,"username": user.username, "email": user.email, 
                                                   "Password" : hashed_password_str , "Key" : salt_str})
         print("Registered")
-        return {"message": "User created successfully", "user_id": str(result.inserted_id)}
+        return {"message": "User created successfully"} , 200
     else:
+        print("email already taken")
+        response.status_code = status.HTTP_409_CONFLICT
         return {"message": "Email already taken"}
 
 
 @app.post("/users/login")
-async def login_user(user: UserDetail):
-    result = await Usercollection.find_one({"email": user.email})
+async def login_user(user: UserDetail, response: Response):
+    result = await Usercollection.find_one({"username": user.username})
     if result:
         stored_hashed_password = result['Password']
         stored_random_key_str = result['Key']
@@ -71,13 +74,15 @@ async def login_user(user: UserDetail):
         hashed_input_password = bcrypt.hashpw(user.password.encode('utf-8'), stored_random_key_bytes)
 
         if hashed_input_password == stored_hashed_password.encode('utf-8'):
-            newUser = await get_user(user.email)
+            newUser = await get_user(user.username)
             newUser.pop('Password', None)
             newUser.pop('Key', None)
             return {"message": "User authenticated", "user_id": str(result['_id']), "new_user": newUser}
         else:
+            response.status_code = status.HTTP_401_UNAUTHORIZED
             return {"message": "Authentication failed"}
     else:
+        response.status_code = status.HTTP_403_FORBIDDEN
         print("User not found")
 
 
