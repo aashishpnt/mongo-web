@@ -2,13 +2,23 @@ from fastapi import FastAPI, HTTPException,Response, status
 import torch
 # import transformers
 from Models import UserDetail
-import bcrypt
-import ast 
+import bcrypt 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi.encoders import jsonable_encoder
+import jwt
 
 app = FastAPI()
+
+SECRET_KEY = "nepal123"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 800
+
+dummy_user = {
+    "username": "aashish",
+    "password": "123456",
+}
 
 origins = [
     "http://localhost",
@@ -23,13 +33,15 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
-MONGO_URI = "mongodb+srv://kaustubniraula999:g2cnkEI8yt9GkfaF@cluster0.hysfwcm.mongodb.net/"
-MONOGODB_URI_LOCALHOST = "mongodb://localhost:27017"
+MONGO_URI = "mongodb+srv://aashishpnt:J664KW7aUeRDnTS@cluster0.4rudedc.mongodb.net/?retryWrites=true&w=majority"
 main_client = AsyncIOMotorClient(MONGO_URI)
+
+MONOGODB_URI_LOCALHOST = "mongodb://localhost:27017"
 client = AsyncIOMotorClient(MONOGODB_URI_LOCALHOST)
 
 db = main_client["mydatabase"] 
 Usercollection = db["users"]
+
 
 # async def connect_to_mongo(CONNECTION_URI):
 #     try:
@@ -68,6 +80,7 @@ async def register_user(user: UserDetail, response: Response):
 
 @app.post("/users/login")
 async def login_user(user: UserDetail, response: Response):
+    data = jsonable_encoder(user)
     result = await Usercollection.find_one({"username": user.username})
     if result:
         stored_hashed_password = result['Password']
@@ -76,25 +89,26 @@ async def login_user(user: UserDetail, response: Response):
         hashed_input_password = bcrypt.hashpw(user.password.encode('utf-8'), stored_random_key_bytes)
 
         if hashed_input_password == stored_hashed_password.encode('utf-8'):
-            newUser = await get_user(user.username)
-            newUser.pop('Password', None)
-            newUser.pop('Key', None)
-            return {"message": "User authenticated", "user_id": str(result['_id']), "new_user": newUser}
+            encoded_jwt = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+            # newUser = await get_user(user.username)
+            # newUser.pop('Password', None)
+            # newUser.pop('Key', None)
+            return {"message": "Welcome to your dashboard", "token": encoded_jwt}
         else:
-            response.status_code = status.HTTP_401_UNAUTHORIZED
-            return {"message": "Authentication failed"}
+            # response.status_code = status.HTTP_401_UNAUTHORIZED
+            return {"message": "Incorrect password"}
     else:
-        response.status_code = status.HTTP_403_FORBIDDEN
-        print("User not found")
+        # response.status_code = status.HTTP_403_FORBIDDEN
+        return {"message": "Username Not Found"}
 
 
-@app.get("/users/getSingleUser/{email}")
-async def get_user(email: str):
-    user = await Usercollection.find_one({"email": email},{'_id': 0})
-    if user:
-        return user
-    else:
-        raise HTTPException(status_code=404, detail="User not found")
+# @app.get("/users/getSingleUser/{email}")
+# async def get_user(email: str):
+#     user = await Usercollection.find_one({"email": email},{'_id': 0})
+#     if user:
+#         return user
+#     else:
+#         raise HTTPException(status_code=404, detail="User not found")
 
 @app.post("/createCollection")
 def create_collection(userId:int, collectionName:str):

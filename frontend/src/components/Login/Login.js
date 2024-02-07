@@ -14,8 +14,8 @@ const Login = () => {
       const username = getValues("username");
       const password = getValues("password");
 
-      console.log('Username:', username);
-      console.log('Password:', password);
+      // console.log('Username:', username);
+      // console.log('Password:', password);
       if(username.length === 0){
         alert("Username has left Blank!");
       }
@@ -23,22 +23,22 @@ const Login = () => {
         alert("password has left blank!");
       }
       else{
-        console.log('Logged in suceessfully')
-        axios.post('http://localhost:8000/login', {
+        // console.log('Logged in suceessfully')
+        axios.post('http://localhost:8000/users/login', {
           username: username,
           password: password
         })
         .then(function (response) {
           console.log(response);
           alert(response.data["message"])
-          if (response.data['message']==="Login failed"){
-            alert("Invalid Credentials, please try again");
-          }else{
+          // if (response.data['message']==="Authentication failed"){
+          //   alert("Invalid Credentials, please try again");
+          // }else{
             if(response.data.token){
               setToken(response.data.token)
               navigate('/dashboard');
             }
-          }
+          // }
         })
         .catch(function (error) {
           console.log(error, "error");

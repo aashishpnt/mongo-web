@@ -32,10 +32,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+MONGO_URI = "mongodb+srv://kaustubniraula999:g2cnkEI8yt9GkfaF@cluster0.hysfwcm.mongodb.net/"
+MONOGODB_URI_LOCALHOST = "mongodb://localhost:27017"
+main_client = AsyncIOMotorClient(MONGO_URI)
+client = AsyncIOMotorClient(MONOGODB_URI_LOCALHOST)
 
-MONOGODB_URI = "mongodb://localhost:27017"
-
-client = AsyncIOMotorClient(MONOGODB_URI)
 db = client.admin
 
 class Loginclass(BaseModel):
