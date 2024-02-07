@@ -26,6 +26,8 @@ app.add_middleware(
 MONGO_URI = "mongodb+srv://kaustubniraula999:g2cnkEI8yt9GkfaF@cluster0.hysfwcm.mongodb.net/"
 MONOGODB_URI_LOCALHOST = "mongodb://localhost:27017"
 main_client = AsyncIOMotorClient(MONGO_URI)
+client = AsyncIOMotorClient(MONOGODB_URI_LOCALHOST)
+
 db = main_client["mydatabase"] 
 Usercollection = db["users"]
 
@@ -100,9 +102,17 @@ def create_collection(userId:int, collectionName:str):
     db = client[collectionName+str(userId)]
     return db
 
-@app.get("/GetAllCollections")
-async def GetAllCollection(user_id:str, db_name: str):
-    db = main_client[db_name]
+@app.get("/databases")
+async def get_databases():
+    try:
+        databases = await client.list_database_names()
+        return {"databases": databases}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+@app.get("/GetAllCollections/{client_db_name}")
+async def GetAllCollection(user_id:str, client_db_name: str):
+    db = client[client_db_name]
     collection_names = await db.list_collection_names()
     return collection_names
 
