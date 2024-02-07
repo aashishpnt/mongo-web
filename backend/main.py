@@ -4,9 +4,9 @@ import torch
 from Models import UserDetail
 import bcrypt 
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.encoders import jsonable_encoder
+from config import MONGO_URI, MONOGODB_URI_LOCALHOST
 import jwt
 
 app = FastAPI()
@@ -14,11 +14,6 @@ app = FastAPI()
 SECRET_KEY = "nepal123"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 800
-
-dummy_user = {
-    "username": "aashish",
-    "password": "123456",
-}
 
 origins = [
     "http://localhost",
@@ -33,10 +28,9 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
-MONGO_URI = "mongodb+srv://aashishpnt:J664KW7aUeRDnTS@cluster0.4rudedc.mongodb.net/?retryWrites=true&w=majority"
+
 main_client = AsyncIOMotorClient(MONGO_URI)
 
-MONOGODB_URI_LOCALHOST = "mongodb://localhost:27017"
 client = AsyncIOMotorClient(MONOGODB_URI_LOCALHOST)
 
 db = main_client["mydatabase"] 
