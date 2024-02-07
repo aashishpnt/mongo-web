@@ -10,8 +10,7 @@ const QueryOutput = () => {
   useEffect(() => {
     const fetchDatabases = async () => {
       try {
-        const response = await fetch('http://localhost:8000/databases');  // Adjust the URL based on your FastAPI server setup
-
+        const response = await fetch('http://localhost:8000/databases');  
         if (!response.ok) {
           throw new Error('Failed to fetch databases');
         }
@@ -29,8 +28,7 @@ const QueryOutput = () => {
   useEffect(() => {
     const fetchCollections = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/collections/${selectedDatabase}`);  // Adjust the URL based on your FastAPI server setup
-
+        const response = await fetch(`http://localhost:8000/collections/${selectedDatabase}`); 
         if (!response.ok) {
           throw new Error('Failed to fetch collections');
         }
