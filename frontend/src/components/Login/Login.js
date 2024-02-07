@@ -8,17 +8,12 @@ import { setToken, fetchToken } from "../Auth";
 const Login = () => {
   const { register, handleSubmit, getValues, errors } = useForm();
   const navigate = useNavigate();
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [errorMessage, setErrorMessage] = useState("");
-  // const [, setToken] = useContext(UserContext);
 
   const onSubmit = async (data) => {
     try {
       const username = getValues("username");
       const password = getValues("password");
-      // console.log(data);
-      // console.log('Logged in successfully');
+
       console.log('Username:', username);
       console.log('Password:', password);
       if(username.length === 0){
