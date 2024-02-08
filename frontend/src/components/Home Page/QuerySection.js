@@ -1,15 +1,36 @@
 // QuerySection.js
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
 import './QuerySection.css';
 
 
 const QuerySection = () => {
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, getValues, errors } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    // form submission logic
+  const onSubmit = async (data) => {
+    try  {
+      // console.log(data);
+      const query = getValues("query");
+      console.log("your query:", query);
+    axios.post("http://localhost:8000/processQuery", {
+      query: query,
+    },{
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function (response) {
+      console.log(response);
+      alert(response.data["message"])
+    })
+    .catch(function (error) {
+      console.log(error, "error");
+    });
+
+  } catch (error) {
+    console.error("Error during query parsing:", error);
+  }
   };
 
   return (
@@ -22,8 +43,8 @@ const QuerySection = () => {
           <input
             type="text"
             name="query"
-            placeholder="Enter MongoDB query"
-            {...register('Query is required', { required: true })}
+            placeholder="Enter NL Query"
+            {...register('query', { required: true })}
           />
           {errors && errors.query && (
             <span className="error-message">{errors.query.message}</span>

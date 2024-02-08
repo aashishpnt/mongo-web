@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException,Response, status
 import torch
 # import transformers
-from Models import UserDetail
+from Models import UserDetail, Query
 import bcrypt 
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -125,12 +125,17 @@ async def GetAllCollection(user_id:str, client_db_name: str):
     return collection_names
 
 @app.post("/processQuery")
-def GetUserQuery(str):
-#     input_text = [str]
+async def GetUserQuery(query: Query):
+    print("goodmoringi")
+    try:
+        print("goodmorning")
+        # print(query.dict())
+        # input_text = query.query  
 #     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
 
 #     output = model.generate(input_ids)
 
 #     output_text = tokenizer.decode(output[0], skip_special_tokens=True)
-    # return output_text
-    return 0
+        return {"message": "Query processed successfully"}
+    except Exception as e:
+        return {"message": str(e)}

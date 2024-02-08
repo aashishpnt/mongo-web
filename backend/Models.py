@@ -5,3 +5,6 @@ class UserDetail(BaseModel):
     email: str = None
     username: str
     password : str
+
+class Query(BaseModel):
+    query: str
