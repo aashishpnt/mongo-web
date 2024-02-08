@@ -1,5 +1,5 @@
 // QuerySection.js
-import React from 'react';
+import {React, useState} from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import './QuerySection.css';
@@ -7,14 +7,22 @@ import './QuerySection.css';
 
 const QuerySection = () => {
   const { register, handleSubmit, getValues, errors } = useForm();
+  // const [query, setquery] = useState("");
+
+  // const handleEmailChange = (event) => {
+  //   let userdata=event.target.value;
+  //   setquery(userdata);
+  // };
+
+  var query = "kaustuib"
 
   const onSubmit = async (data) => {
     try  {
       // console.log(data);
       const query = getValues("query");
-      console.log("your query:", query);
+      console.log("your query:", String("query"));
     axios.post("http://localhost:8000/processQuery", {
-      query: query,
+      query : query,
     },{
       headers: {
         'Content-Type': 'application/json',
@@ -27,6 +35,14 @@ const QuerySection = () => {
     .catch(function (error) {
       console.log(error, "error");
     });
+
+    // const response = await fetch('http://localhost:8000/processQuery', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/string',
+    //     },
+    //     body: JSON.stringify({ query }),
+    //   });
 
   } catch (error) {
     console.error("Error during query parsing:", error);

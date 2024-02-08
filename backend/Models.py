@@ -7,4 +7,4 @@ class UserDetail(BaseModel):
     password : str
 
 class Query(BaseModel):
-    query: str
+    query: str = None

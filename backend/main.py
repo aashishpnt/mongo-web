@@ -6,7 +6,7 @@ import bcrypt
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.encoders import jsonable_encoder
-from config import MONGO_URI, MONOGODB_URI_LOCALHOST
+from config import MONGO_URI, MONOGODB_URI_LOCALHOST, MONGO_URI_kaustub
 import jwt
 
 app = FastAPI()
@@ -29,7 +29,7 @@ app.add_middleware(
 )
 
 
-main_client = AsyncIOMotorClient(MONGO_URI)
+main_client = AsyncIOMotorClient(MONGO_URI_kaustub)
 
 client = AsyncIOMotorClient(MONOGODB_URI_LOCALHOST)
 
@@ -126,7 +126,7 @@ async def GetAllCollection(user_id:str, client_db_name: str):
 
 @app.post("/processQuery")
 async def GetUserQuery(query: Query):
-    print("goodmoringi")
+    print(query)
     try:
         print("goodmorning")
         # print(query.dict())
