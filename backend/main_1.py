@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from fastapi.encoders import jsonable_encoder
 import jwt
 
-
+# project mongo 
 SECRET_KEY = "nepal123"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 800
