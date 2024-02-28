@@ -48,3 +48,40 @@
     background-color: darkgreen; 
   }
   
+  /* for query output styling */
+
+.output-container {
+  margin-top: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #f8f8f8;
+  display: flex;
+  align-items: center;
+}
+
+.output-text {
+  flex: 1;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+}
+
+.copy-button {
+  margin-left: 10px;
+  padding: 8px;
+  border: none;
+  background-color: #3498db;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.copy-button:hover {
+  background-color: #2980b9;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 5px;
+}

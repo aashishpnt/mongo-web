@@ -6,6 +6,8 @@ const QueryOutput = () => {
   const [databases, setDatabases] = useState([]);
   const [selectedDatabase, setSelectedDatabase] = useState('');
   const [collections, setCollections] = useState([]);
+  const [selectedCollection, setSelectedCollection] = useState('');
+  const [fields, setFields] = useState([]);
 
   useEffect(() => {
     const fetchDatabases = async () => {
@@ -45,9 +47,37 @@ const QueryOutput = () => {
     }
   }, [selectedDatabase]);
 
+  useEffect(() => {
+    const fetchFields = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/fields/${selectedDatabase}/${selectedCollection}`); 
+        if (!response.ok) {
+          throw new Error('Failed to fetch fields');
+        }
+
+        const data = await response.json();
+        setFields(data.fields);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (selectedDatabase && selectedCollection) {
+      fetchFields();
+    }
+  }, [selectedDatabase, selectedCollection]);
+
   const handleDatabaseClick = (database) => {
     setSelectedDatabase((prevSelectedDatabase) =>
       prevSelectedDatabase === database ? '' : database
+    );
+    setSelectedCollection('');
+    setFields([]);
+  };
+  
+  const handleCollectionClick = (collection) => {
+    setSelectedCollection((prevSelectedCollection) =>
+      prevSelectedCollection === collection ? '' : collection
     );
   };
 
@@ -66,9 +96,29 @@ const QueryOutput = () => {
           
             {selectedDatabase === database && (
               <ul className="sublist">
-                {collections.map((collection) => (
-                  <li key={collection}>{collection}</li>
-                ))}
+                  {collections && collections.length > 0 ? (
+                    collections.map((collection) => (
+                      <li key={collection}>  
+                      <span onClick={() => handleCollectionClick(collection)} style={{ cursor: 'pointer' }}>
+                      {selectedCollection === collection ? '-' : '+'} {collection}
+                    </span>
+
+                    {selectedCollection === collection && (
+                          <ul className="sublist">
+                            {fields && fields.length > 0 ? (
+                              fields.map((field) => (
+                                <li key={field}>{field}</li>
+                              ))
+                            ) : (
+                              <li>No fields available</li>
+                            )}
+                          </ul>
+                        )}
+                    </li>
+                    ))
+                  ) : (
+                    <li>No collections available</li>
+                  )}
               </ul>
             )}
           </li>

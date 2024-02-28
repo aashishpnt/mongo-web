@@ -1,40 +1,85 @@
-// QueryForm.js
-import React from 'react';
+import { React, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import './QueryForm.css';
+import axios from 'axios';
 
+const OutputDisplay = ({ outputText }) => {
+  const [isCopied, setIsCopied] = useState(false);
 
-const QueryForm = () => {
-  const { register, handleSubmit, errors } = useForm();
-
-  const onSubmit = (data) => {
-    console.log(data);
-    // form submission logic
+  const handleCopyClick = () => {
+    navigator.clipboard.writeText(outputText);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 1500);
   };
 
   return (
-    <div className="query-form">
+    <div className="output-container">
+      <div className="output-text">{outputText}</div>
+      <button className="copy-button" onClick={handleCopyClick}>
+        {isCopied ? 'Copied!' : 'Copy'}
+      </button>
+    </div>
+  );
+};
+
+const QuerySection = () => {
+  const { register, handleSubmit, getValues, errors } = useForm();
+  const [outputText, setOutputText] = useState("");
+
+  const onSubmit = async (data) => {
+    try {
+      const query = getValues("query");
+      console.log("Your query:", String(query));
+
+      axios.post("http://localhost:8000/schemaquery", {
+        query: query,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(function (response) {
+          console.log(response);
+          setOutputText(response.data.result); 
+        })
+        .catch(function (error) {
+          console.log(error, "error");
+          setOutputText("Error during query parsing");
+        });
+    } catch (error) {
+      console.error("Error during query parsing:", error);
+      setOutputText("Error during query parsing");
+    }
+  };
+
+  return (
+    <div className="query-section">
       <div className="query-section-container section-container">
         <h1 className="query-section-heading heading2">
           Explore Your MongoDB Database
         </h1>
-        <form className="query-form" onSubmit={handleSubmit(onSubmit)}>
+        <form className="query-section-form" onSubmit={handleSubmit(onSubmit)}>
           <input
             type="text"
             name="query"
-            placeholder="Enter MongoDB query"
-            {...register('Query is required', { required: true })}
+            placeholder="Enter NL Query"
+            {...register('query', { required: true })}
           />
           {errors && errors.query && (
             <span className="error-message">{errors.query.message}</span>
           )}
           <button type="submit" className="button-filled">
-            Query Database
+            Generate Query
           </button>
         </form>
+
+        {outputText && (
+          <OutputDisplay outputText={outputText} />
+        )}
       </div>
     </div>
   );
 };
 
-export default QueryForm;
+export default QuerySection;

@@ -35,12 +35,12 @@ const FeatureSection = () => {
       subHeading: 'Execute the query and retrieve data from MongoDB server',
     },
     {
-      logo: <FcAcceptDatabase size={50} />, // Add your next logo component here
+      logo: <FcAcceptDatabase size={50} />, 
       heading: 'Output JSON',
       subHeading: 'View the output of the query in JSON format',
     },
     {
-      logo: <FcAcceptDatabase size={50} />, // Add your next logo component here
+      logo: <FcAcceptDatabase size={50} />, 
       heading: 'Database Integration',
       subHeading: 'Seamlessly connect to your MongoDB database for querying',
     },

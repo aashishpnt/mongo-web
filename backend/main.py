@@ -1,13 +1,14 @@
 from fastapi import FastAPI, HTTPException,Response, status
 import torch
-# import transformers
 from Models import UserDetail, Query
 import bcrypt 
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.encoders import jsonable_encoder
-from config import MONGO_URI, MONOGODB_URI_LOCALHOST, MONGO_URI_kaustub
+from config import MONGO_URI, MONOGODB_URI_LOCALHOST
 import jwt
+import torch
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 app = FastAPI()
 
@@ -29,7 +30,7 @@ app.add_middleware(
 )
 
 
-main_client = AsyncIOMotorClient(MONGO_URI_kaustub)
+main_client = AsyncIOMotorClient(MONGO_URI)
 
 client = AsyncIOMotorClient(MONOGODB_URI_LOCALHOST)
 
@@ -118,24 +119,91 @@ async def get_databases():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
-@app.get("/GetAllCollections/{client_db_name}")
-async def GetAllCollection(user_id:str, client_db_name: str):
-    db = client[client_db_name]
-    collection_names = await db.list_collection_names()
-    return collection_names
+@app.get("/collections/{database_name}")
+async def get_collections(database_name: str):
+    try:
+        # Fetch the list of collections for a specific database
+        db = client[database_name]
+        collections = await db.list_collection_names()
 
-@app.post("/processQuery")
-async def GetUserQuery(query: Query):
+        return {"collections": collections}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+
+@app.get("/fields/{database_name}/{collection_name}")
+async def get_fields(database_name: str, collection_name: str):
+    try:
+        # Fetch the list of fields for a specific collection in a database
+        db = client[database_name]
+        collection = db[collection_name]
+
+        # Fetch one document from the collection to get its keys (fields)
+        sample_document = await collection.find_one()
+        if sample_document:
+            fields = list(sample_document.keys())
+            return {"fields": fields}
+        else:
+            return {"fields": []}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+
+
+@app.post("/query")
+async def UserQuery(query: Query):
     print(query)
     try:
         print("goodmorning")
-        # print(query.dict())
-        # input_text = query.query  
-#     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
+       
+        user_input = query.query
 
-#     output = model.generate(input_ids)
+        model_checkpoint_path = "../model/main_model/my5t-base.pth"
+        checkpoint = torch.load(model_checkpoint_path,map_location=torch.device('cpu'))
 
-#     output_text = tokenizer.decode(output[0], skip_special_tokens=True)
-        return {"message": "Query processed successfully"}
+        # Create a model instance and load the state dictionary
+        model = AutoModelForSeq2SeqLM.from_pretrained("mrm8488/t5-base-finetuned-wikiSQL") 
+        model.load_state_dict(checkpoint)
+
+        # Load the tokenizer and model
+        tokenizer = AutoTokenizer.from_pretrained("../model/Tokenizer")
+        input_ids = tokenizer([user_input], return_tensors="pt").input_ids
+        output = model.generate(input_ids)
+
+        # Decode the model output
+        generated_query = tokenizer.decode(output[0], skip_special_tokens=True)
+        print("this is the main output")
+        print(generated_query)
+        return {"result": generated_query}
+    except Exception as e:
+        return {"message": str(e)}
+    
+    
+@app.post("/schemaquery")
+async def UserQuery(query: Query):
+    print(query)
+    try:
+        print("goodmorning")
+       
+        user_input = query.query
+
+        model_checkpoint_path = "../model/main_model/my5t-base.pth"
+        checkpoint = torch.load(model_checkpoint_path,map_location=torch.device('cpu'))
+
+        # Create a model instance and load the state dictionary
+        model = AutoModelForSeq2SeqLM.from_pretrained("mrm8488/t5-base-finetuned-wikiSQL") 
+        model.load_state_dict(checkpoint)
+
+        # Load the tokenizer and model
+        tokenizer = AutoTokenizer.from_pretrained("../model/Tokenizer")
+        input_ids = tokenizer([user_input], return_tensors="pt").input_ids
+        output = model.generate(input_ids)
+
+        # Decode the model output
+        generated_query = tokenizer.decode(output[0], skip_special_tokens=True)
+        print("this is the main output")
+        print(generated_query)
+        return {"result": generated_query}
     except Exception as e:
         return {"message": str(e)}

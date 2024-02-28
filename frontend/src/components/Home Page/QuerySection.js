@@ -1,52 +1,57 @@
-// QuerySection.js
-import {React, useState} from 'react';
+import { React, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import './QuerySection.css';
 
+const OutputDisplay = ({ outputText }) => {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyClick = () => {
+    navigator.clipboard.writeText(outputText);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="output-container">
+      <div className="output-text">{outputText}</div>
+      <button className="copy-button" onClick={handleCopyClick}>
+        {isCopied ? 'Copied!' : 'Copy'}
+      </button>
+    </div>
+  );
+};
 
 const QuerySection = () => {
   const { register, handleSubmit, getValues, errors } = useForm();
-  // const [query, setquery] = useState("");
-
-  // const handleEmailChange = (event) => {
-  //   let userdata=event.target.value;
-  //   setquery(userdata);
-  // };
-
-  var query = "kaustuib"
+  const [outputText, setOutputText] = useState("");
 
   const onSubmit = async (data) => {
-    try  {
-      // console.log(data);
+    try {
       const query = getValues("query");
-      console.log("your query:", String("query"));
-    axios.post("http://localhost:8000/processQuery", {
-      query : query,
-    },{
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      console.log(response);
-      alert(response.data["message"])
-    })
-    .catch(function (error) {
-      console.log(error, "error");
-    });
+      console.log("Your query:", String(query));
 
-    // const response = await fetch('http://localhost:8000/processQuery', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/string',
-    //     },
-    //     body: JSON.stringify({ query }),
-    //   });
-
-  } catch (error) {
-    console.error("Error during query parsing:", error);
-  }
+      axios.post("http://localhost:8000/query", {
+        query: query,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(function (response) {
+          console.log(response);
+          setOutputText(response.data.result); 
+        })
+        .catch(function (error) {
+          console.log(error, "error");
+          setOutputText("Error during query parsing");
+        });
+    } catch (error) {
+      console.error("Error during query parsing:", error);
+      setOutputText("Error during query parsing");
+    }
   };
 
   return (
@@ -69,6 +74,10 @@ const QuerySection = () => {
             Generate Query
           </button>
         </form>
+
+        {outputText && (
+          <OutputDisplay outputText={outputText} />
+        )}
       </div>
     </div>
   );
