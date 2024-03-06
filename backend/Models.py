@@ -8,3 +8,7 @@ class UserDetail(BaseModel):
 
 class Query(BaseModel):
     query: str = None
+    
+class QueryDB(BaseModel):
+    query:str = None
+    database:str = None

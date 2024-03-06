@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
@@ -25,7 +25,31 @@ const OutputDisplay = ({ outputText }) => {
 
 const QuerySection = () => {
   const { register, handleSubmit, getValues, errors } = useForm();
-  const [outputText, setOutputText] = useState("");
+  const [result, setResult] = useState("");
+  const [outputData, setOutputData] = useState("");
+  const [databases, setDatabases] = useState([]);
+  const [selectedDatabase, setSelectedDatabase] = useState("");
+
+
+  useEffect(() => {
+    const fetchDatabases = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/databases');  
+        if (!response.ok) {
+          throw new Error('Failed to fetch databases');
+        }
+
+        const data = await response.json();
+        setDatabases(data.databases);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchDatabases();
+  }, []);
+
+
 
   const onSubmit = async (data) => {
     try {
@@ -34,6 +58,7 @@ const QuerySection = () => {
 
       axios.post("http://localhost:8000/schemaquery", {
         query: query,
+        database: selectedDatabase,
       }, {
         headers: {
           'Content-Type': 'application/json',
@@ -41,15 +66,17 @@ const QuerySection = () => {
       })
         .then(function (response) {
           console.log(response);
-          setOutputText(response.data.result); 
+          setResult(response.data.result);
+          setOutputData(response.data.output_data);
+          console.log(response.data.output_data); 
         })
         .catch(function (error) {
           console.log(error, "error");
-          setOutputText("Error during query parsing");
+          setOutputData("Error during query parsing");
         });
     } catch (error) {
       console.error("Error during query parsing:", error);
-      setOutputText("Error during query parsing");
+      setOutputData("Error during query parsing");
     }
   };
 
@@ -69,13 +96,41 @@ const QuerySection = () => {
           {errors && errors.query && (
             <span className="error-message">{errors.query.message}</span>
           )}
+
+          <select
+            name="database"
+            value={selectedDatabase}
+            onChange={(e) => setSelectedDatabase(e.target.value)}
+            className="database-dropdown"
+          >
+            <option value="" disabled>Select Database</option>
+            {databases.map((database) => (
+              <option key={database} value={database}>{database}</option>
+            ))}
+          </select>
           <button type="submit" className="button-filled">
-            Generate Query
+            Execute Query
           </button>
         </form>
 
-        {outputText && (
-          <OutputDisplay outputText={outputText} />
+        {result && (<>
+          <h3>Corresponding MongoDB query</h3>
+          <OutputDisplay outputText={result} />
+          </>
+        )}
+         {/* {result && (
+          <div className="output-container">
+            <div className="output-text">{result}</div>
+          </div>
+        )} */}
+
+        {outputData && (<>
+            <h3>Result from database:</h3>
+          <div className="output-container">
+            <div className="output-text">{outputData}</div>
+            
+          </div>
+          </>
         )}
       </div>
     </div>
