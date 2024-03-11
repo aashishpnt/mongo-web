@@ -256,8 +256,8 @@ def select_model_and_output(user_input):
         # input_ids = tokenizer([user_input], return_tensors="pt").input_ids
         # output = basic_model.generate(input_ids)
         # generated_query = tokenizer.decode(output[0], skip_special_tokens=True)
-        model = AutoModelForSeq2SeqLM.from_pretrained("Chirayu/nl2mongo")
-        tokenizer = AutoTokenizer.from_pretrained("Chirayu/nl2mongo")
+        model = AutoModelForSeq2SeqLM.from_pretrained("../model/final_model")
+        tokenizer = AutoTokenizer.from_pretrained("../model/final_model")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = model.to(device)
         def generate_query(
@@ -304,45 +304,60 @@ def select_model_and_output(user_input):
     
 # generate query for model from graph and query
 def genquery(query,tree):
-    # Create a directed graph
-    G = nx.DiGraph()
-    # Add edges to the graph
-    G.add_edges_from(tree)
-    # Find the root node(s)
-    root_nodes = [n for n, d in G.in_degree() if d == 0]
-    # Find intermediate nodes
-    intermediate_nodes = [n for n, d in G.degree() if d > 1 and n not in root_nodes]
 
-    # Tokenize the text into words
-    words = word_tokenize(query)
+  # Create a directed graph
+  G = nx.DiGraph()
 
-    # Stem each word
-    stemmed_words = [porter.stem(word) for word in words]
+# Add edges to the graph
+  G.add_edges_from(tree)
 
-    # Join the stemmed words back into a single string
-    stemmed_text = ' '.join(stemmed_words)
-    i=0
+# Find the root node(s)
+  root_nodes = [n for n, d in G.in_degree() if d == 0]
+
+# Find intermediate nodes
+  intermediate_nodes = [n for n, d in G.degree() if d > 1 and n not in root_nodes]
+
+  # Tokenize the text into words
+  words = word_tokenize(query)
+
+# Stem each word
+  stemmed_words = [porter.stem(word) for word in words]
+
+
+  i=0
+
+  for stemmed_word in stemmed_words:
     for node in intermediate_nodes:
-        words = node.split()
-        word=porter.stem(words[-1])
-        if stemmed_text.find(word[-1]) and word!='''id''' and word!="ids":
-            spec_node=intermediate_nodes[i]
-            break
-        i+=1
-    m_input='''mongo: '''+query+''' | '''+spec_node+''' : '''
-    # List to store nodes connected to the specific intermediate node except root nodes
-    leaf_nodes = []
-    # Iterate through the edges
-    for u, v in G.edges():
-        if u == spec_node and v not in root_nodes:
-            leaf_nodes.append(v.replace(" ", "_"))
-            
-    for nodes in leaf_nodes:
-        if nodes!=leaf_nodes[-1]:
-            m_input += nodes+''', '''
-        else:
-            m_input+=nodes
-    return m_input
+    
+      words = node.split()
+      word=porter.stem(words[-1])
+
+      if stemmed_word==word and word!='''id''' and word!="ids":
+
+        spec_node=node
+        
+        break
+        
+      i+=1
+
+  m_input='''mongo: '''+query+''' | '''+spec_node+''' : '''
+  # List to store nodes connected to the specific intermediate node except root nodes
+  leaf_nodes = []
+
+# Iterate through the edges
+  for u, v in G.edges():
+
+    if u == spec_node and v not in root_nodes:
+        leaf_nodes.append(v.replace(" ", "_"))
+
+  for nodes in leaf_nodes:
+    if nodes!=leaf_nodes[-1]:
+      m_input+=nodes+''', '''
+    else:
+      m_input+=nodes
+  return m_input
+
+
 
 nest_asyncio.apply()
 async def get_collection_fields(collection):
@@ -422,7 +437,9 @@ async def UserQuery(queryDB: QueryDB):
         else:
             collections_and_fields = await get_collections_and_fields(database)
             graph = convert_to_graph(database,collections_and_fields)
+            print(graph.edges())
             query_text = genquery(user_input,graph.edges())
+            print(query_text)
             generated_query = select_model_and_output(query_text)
         
         result_json =None
