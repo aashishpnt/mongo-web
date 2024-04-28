@@ -325,7 +325,7 @@ def genquery(query,tree):
 
 
   i=0
-
+  spec_node = ""
   for stemmed_word in stemmed_words:
     for node in intermediate_nodes:
     
